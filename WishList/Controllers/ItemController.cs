@@ -13,9 +13,9 @@ namespace WishList.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public ItemController(ApplicationDbContext _context)
+        public ItemController(ApplicationDbContext context)
         {
-            this._context = _context;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -31,42 +31,20 @@ namespace WishList.Controllers
         [HttpPost]
         public IActionResult Create(Item item)
         {
-            try
-            {
-                if (item is null)
-                {
-                    return BadRequest("Item is null");
-                }
-                _context.Add(item);
-                _context.SaveChanges();
+            _context.Add(item);
+            _context.SaveChanges();
 
-                return RedirectToAction("Index");
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database failure");
-            }      
+            return RedirectToAction("Index");   
         }
 
         public IActionResult Delete(int id)
         {
-            try
-            {
-                var item = _context.Items.FirstOrDefault(x => x.Id == id);
+            var item = _context.Items.FirstOrDefault(x => x.Id == id);
 
-                if (item is null)
-                {
-                    return BadRequest($"Item with id: {id} not found");
-                }
-                _context.Remove(item);
-                _context.SaveChanges();
+            _context.Remove(item);
+            _context.SaveChanges();
 
-                return RedirectToAction("Index");
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database failure");
-            }
+            return RedirectToAction("Index");
         }
     }
 }
